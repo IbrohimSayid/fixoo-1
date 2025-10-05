@@ -44,7 +44,7 @@ export default function SpecialistHomePage() {
     setShowFixooAnimation(false);
 
     try {
-      const response = await axios.get("https://ik-1.onrender.com/api/v1/my/profile", {
+      const response = await axios.get("http://3.75.173.205:3000/api/v1/my/profile", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
@@ -84,7 +84,7 @@ export default function SpecialistHomePage() {
       }
 
       try {
-        const response = await axios.get("https://ik-1.onrender.com/api/v1/my/files", {
+        const response = await axios.get("http://3.75.173.205:3000/api/v1/my/files", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
@@ -146,7 +146,7 @@ export default function SpecialistHomePage() {
 
       try {
         const response = await axios.post(
-          "https://ik-1.onrender.com/api/v1/files",
+          "http://3.75.173.205:3000/api/v1/files",
           formData,
           {
             headers: {
@@ -181,7 +181,7 @@ export default function SpecialistHomePage() {
 
     try {
       // Backenddan faylni o'chirish
-      await axios.delete(`https://ik-1.onrender.com/api/v1/files/${fileToRemove.id}`, {
+      await axios.delete(`http://3.75.173.205:3000/api/v1/files/${fileToRemove.id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
@@ -373,7 +373,7 @@ export default function SpecialistHomePage() {
           {portfolioFiles.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
               {portfolioFiles.map((file, index) => {
-                const fileUrl = `https://ik-1.onrender.com/${file.fileType}/${file.fileUrl}`;
+                const fileUrl = `http://3.75.173.205:3000/${file.fileType}/${file.fileUrl}`;
                 const isImage = file.fileType === "image";
                 const isVideo = file.fileType === "video";
                 const isPDF = file.fileType === "pdf";

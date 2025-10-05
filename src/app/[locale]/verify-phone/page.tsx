@@ -94,7 +94,7 @@ export default function VerifyPhonePage() {
     try {
       // 1. Avval OTP ni tekshiramiz
       const verifyResponse = await axios.post(
-        "https://ik-1.onrender.com/api/v1/verification/verify",
+        "http://3.75.173.205:3000/api/v1/verification/verify",
         {
           type: purpose,
           phone: phoneNumber,
@@ -118,12 +118,12 @@ export default function VerifyPhonePage() {
             try {
               if (userRole === "MASTER") {
                 registerResponse = await axios.post(
-                  "https://ik-1.onrender.com/api/v1/auth/register",
+                  "http://3.75.173.205:3000/api/v1/auth/register",
                   formData
                 );
               } else if (userRole === "USER") {
                 registerResponse = await axios.post(
-                  "https://ik-1.onrender.com/api/v1/auth/register",
+                  "http://3.75.173.205:3000/api/v1/auth/register",
                   {
                     firstName: formData.firstName,
                     lastName: formData.lastName,
@@ -202,7 +202,7 @@ export default function VerifyPhonePage() {
     setCode(["", "", "", "", "", ""]); // Clear kod inputlarini
 
     try {
-      await axios.post("https://ik-1.onrender.com/api/v1/verification/send", {
+      await axios.post("http://3.75.173.205:3000/api/v1/verification/send", {
         type: purpose,
         phone: phoneNumber
       });

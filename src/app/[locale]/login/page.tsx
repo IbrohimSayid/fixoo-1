@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import HammerLoader from "../../components/HammerLoader";
@@ -21,10 +21,16 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    const handleComplete = () => {
+      setIsLoading(false);
+    };
+    return () => {};
+  }, []);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validation
     if (!phone || !password) {
       setError("Telefon raqam va parolni kiriting");
       return;
@@ -34,30 +40,30 @@ export default function LoginPage() {
     setError("");
 
     try {
-      // Simulate API call
-      const response = await axios.post("https://ik-1.onrender.com/api/v1/auth/login", {
-        phone,
-        password,
-      });
+      const response = await axios.post(
+        "http://3.75.173.205:3000/api/v1/auth/login",
+        {
+          phone,
+          password,
+        }
+      );
 
-      const user = await axios.get("https://ik-1.onrender.com/api/v1/my/profile", {
-        headers: {
-          Authorization: `Bearer ${response.data.accessToken}`,
-        },
-      });
-
-      console.log(user.data);
-      
+      const user = await axios.get(
+        "http://3.75.173.205:3000/api/v1/my/profile",
+        {
+          headers: {
+            Authorization: `Bearer ${response.data.accessToken}`,
+          },
+        }
+      );
 
       if (user.data) {
-        // Success - save user data
         localStorage.setItem("accessToken", response.data.accessToken);
         localStorage.setItem("refreshToken", response.data.refreshToken);
         localStorage.setItem("justLoggedIn", "true");
-
         localStorage.setItem("userRole", user.data.data.role);
 
-        // Redirect based on role
+        // Redirect
         if (user.data.data.role === "MASTER") {
           router.push("/homespecialist");
         } else {
@@ -69,12 +75,11 @@ export default function LoginPage() {
             role === "MASTER" ? "Usta" : "Mijoz"
           } sifatida telefon raqam yoki parol notogri`
         );
+        setIsLoading(false);
       }
     } catch (error) {
       console.log(error);
-
       setError("Xatolik yuz berdi. Qaytadan urinib koring");
-    } finally {
       setIsLoading(false);
     }
   };
@@ -185,16 +190,12 @@ export default function LoginPage() {
 
           <form onSubmit={handleLogin} className="space-y-4 sm:space-y-6">
             {/* Phone Number */}
-            <PhoneInput
-              value={phone}
-              onChange={setPhone}
-              required
-            />
+            <PhoneInput value={phone} onChange={setPhone} required />
 
             {/* Password */}
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">
-                {t('password')} <span className="text-red-500">*</span>
+                {t("password")} <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <input

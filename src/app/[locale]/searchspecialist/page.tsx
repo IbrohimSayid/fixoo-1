@@ -8,7 +8,7 @@ import { regions, getDistricts } from "../../lib/location-data";
 import HammerLoader from "../../components/HammerLoader";
 import RatingModal from "../../components/RatingModal";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+// import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
 type User = {
@@ -86,7 +86,7 @@ export default function SearchPage() {
 
       try {
         const response = await axios.get(
-          "https://ik-1.onrender.com/api/v1/masters/all",
+          "http://3.75.173.205:3000/api/v1/masters/all",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -137,7 +137,7 @@ export default function SearchPage() {
 
     try {
       const response = await axios.get(
-        `https://ik-1.onrender.com/api/v1/masters?profession=${profession}&region=${region}&district=${district}`
+        `http://3.75.173.205:3000/api/v1/masters?profession=${profession}&region=${region}&district=${district}`
       );
       const allUsers = response.data.data;
       const filteredUsers = allUsers.filter((user: User) => {
@@ -206,7 +206,7 @@ export default function SearchPage() {
       };
 
       const response = await axios.post(
-        "https://ik-1.onrender.com/api/v1/orders",
+        "http://3.75.173.205:3000/api/v1/orders",
         payload,
         {
           headers: {

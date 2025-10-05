@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import HammerLoader from '../../components/HammerLoader';
 import RatingModal from '../../components/RatingModal';
 import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+// import 'react-toastify/dist/ReactToastify.css';
 
 interface Order {
   id: string;

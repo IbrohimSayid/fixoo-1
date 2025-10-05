@@ -58,7 +58,7 @@ export default function SettingsPage() {
       }
 
       try {
-        const response = await axios.get("https://ik-1.onrender.com/api/v1/my/profile", {
+        const response = await axios.get("http://3.75.173.205:3000/api/v1/my/profile", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
@@ -141,7 +141,7 @@ export default function SettingsPage() {
       const token = localStorage.getItem("accessToken");
 
       // So‘rov yuborish
-      await axios.put("https://ik-1.onrender.com/api/v1/my/profile", formData, {
+      await axios.put("http://3.75.173.205:3000/api/v1/my/profile", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -186,7 +186,7 @@ export default function SettingsPage() {
   const handleDeleteAccount = async () => {
     // Remove from users array
     const allUsersRaw = await axios.delete(
-      "https://ik-1.onrender.com/api/v1/my/profile",
+      "http://3.75.173.205:3000/api/v1/my/profile",
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

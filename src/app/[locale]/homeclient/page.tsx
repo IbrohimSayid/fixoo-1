@@ -24,7 +24,7 @@ export default function ClientHomePage() {
     setShowFixooAnimation(false);
 
     try {
-      const response = await axios.get("https://ik-1.onrender.com/api/v1/my/profile", {
+      const response = await axios.get("http://3.75.173.205:3000/api/v1/my/profile", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
