@@ -41,7 +41,7 @@ export default function LoginPage() {
 
     try {
       const response = await axios.post(
-        "http://3.75.173.205:3000/api/v1/auth/login",
+        "https://fixoo.uz/api/v1/auth/login",
         {
           phone,
           password,
@@ -49,7 +49,7 @@ export default function LoginPage() {
       );
 
       const user = await axios.get(
-        "http://3.75.173.205:3000/api/v1/my/profile",
+        "https://fixoo.uz/api/v1/my/profile",
         {
           headers: {
             Authorization: `Bearer ${response.data.accessToken}`,

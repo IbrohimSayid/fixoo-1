@@ -46,7 +46,9 @@ export default function SearchPage() {
   const [profession, setProfession] = useState("");
   const [region, setRegion] = useState("");
   const [district, setDistrict] = useState("");
-  const [districts, setDistricts] = useState<{ value: string; label: string }[]>([]);
+  const [districts, setDistricts] = useState<
+    { value: string; label: string }[]
+  >([]);
   const [results, setResults] = useState<User[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
 
@@ -61,7 +63,8 @@ export default function SearchPage() {
 
   // Modal for editing / sending new order (address & description)
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
-  const [selectedOrderForModal, setSelectedOrderForModal] = useState<OrderHistory | null>(null);
+  const [selectedOrderForModal, setSelectedOrderForModal] =
+    useState<OrderHistory | null>(null);
   const [modalAddress, setModalAddress] = useState("");
   const [modalDescription, setModalDescription] = useState("");
 
@@ -77,7 +80,7 @@ export default function SearchPage() {
         return;
       }
 
-      // Clear demo data if needed
+      // Clear old demo data
       localStorage.removeItem("clientOrderHistory");
       localStorage.removeItem("specialistOrders");
       localStorage.removeItem("ratings");
@@ -85,17 +88,45 @@ export default function SearchPage() {
       setOrderHistory([]);
 
       try {
-        const response = await axios.get(
-          "http://3.75.173.205:3000/api/v1/masters/all",
+        // Ustalarni olish
+        const mastersRes = await axios.get(
+          "https://fixoo.uz/api/v1/masters/all",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             },
           }
         );
-        setAllMasters(response.data.data || []);
+        setAllMasters(mastersRes.data.data || []);
+
+        // 🆕 Buyurtmalarni olish
+        const ordersRes = await axios.get("https://fixoo.uz/api/v1/orders/history", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        });
+
+        console.log(ordersRes)
+
+        // API qaytaradigan formatni moslashtiramiz
+        const ordersData = (ordersRes.data.data || []).map((order: any) => ({
+          id: order.id,
+          specialistName: order.master?.fullName || "Noma'lum usta",
+          specialistPhone: order.master?.phone || "",
+          service: order.service || order.master?.profession || "",
+          address: order.address,
+          date: order.date || "",
+          time: order.time || "",
+          status: order.status || "pending",
+          description: order.description || "",
+          price: order.price || undefined,
+          isRated: order.isRated || false,
+        }));
+
+        setOrderHistory(ordersData);
       } catch (error) {
-        console.error("Ustalarni yuklashda xatolik:", error);
+        console.error("Ma'lumotlarni yuklashda xatolik:", error);
+        toast.error("Ma'lumotlarni yuklashda xatolik yuz berdi");
       }
 
       setIsLoading(false);
@@ -137,7 +168,7 @@ export default function SearchPage() {
 
     try {
       const response = await axios.get(
-        `http://3.75.173.205:3000/api/v1/masters?profession=${profession}&region=${region}&district=${district}`
+        `https://fixoo.uz/api/v1/masters?profession=${profession}&region=${region}&district=${district}`
       );
       const allUsers = response.data.data;
       const filteredUsers = allUsers.filter((user: User) => {
@@ -167,7 +198,8 @@ export default function SearchPage() {
       id: user.id, // vaqtinchalik id
       specialistName: `${user.firstName} ${user.lastName}`,
       specialistPhone: user.phone,
-      service: professions.find((p) => p.value === user.profession)?.label || "",
+      service:
+        professions.find((p) => p.value === user.profession)?.label || "",
       address: "",
       date: "", // agar kerak bo‘lsa default
       time: "",
@@ -206,7 +238,7 @@ export default function SearchPage() {
       };
 
       const response = await axios.post(
-        "http://3.75.173.205:3000/api/v1/orders",
+        "https://fixoo.uz/api/v1/orders",
         payload,
         {
           headers: {
@@ -214,6 +246,8 @@ export default function SearchPage() {
           },
         }
       );
+
+      console.log(response)
 
       // Faraz qilaylik, API bizga yangi buyurtma objectini qaytaradi:
       const createdOrder: OrderHistory = response.data.data;
@@ -732,9 +766,7 @@ export default function SearchPage() {
       {isOrderModalOpen && selectedOrderForModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.5)] bg-opacity-50">
           <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-lg">
-            <h2 className="text-xl font-bold mb-4">
-              Buyurtma berish
-            </h2>
+            <h2 className="text-xl font-bold mb-4">Buyurtma berish</h2>
 
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">

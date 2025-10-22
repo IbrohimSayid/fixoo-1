@@ -5,11 +5,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import HammerLoader from "../../components/HammerLoader";
 import PhoneInput from "../../components/PhoneInput";
+import axios from "axios";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const t = useTranslations();
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [phone, setPhone] = useState("");
@@ -19,31 +21,55 @@ export default function ResetPasswordPage() {
   const [error, setError] = useState("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
+  // const validatePasswords = () => {
+  //   if (!newPassword || !confirmPassword) {
+  //     setError("Iltimos, barcha maydonlarni to'ldiring");
+  //     return false;
+  //   }
 
+  //   if (newPassword.length < 6) {
+  //     setError("Parol kamida 6 ta belgidan iborat bo'lishi kerak");
+  //     return false;
+  //   }
 
-  const validatePasswords = () => {
-    if (!newPassword || !confirmPassword) {
-      setError("Iltimos, barcha maydonlarni to'ldiring");
-      return false;
-    }
+  //   if (newPassword !== confirmPassword) {
+  //     setError("Parollar mos kelmayapti");
+  //     return false;
+  //   }
 
-    if (newPassword.length < 6) {
-      setError("Parol kamida 6 ta belgidan iborat bo'lishi kerak");
-      return false;
-    }
-
-    if (newPassword !== confirmPassword) {
-      setError("Parollar mos kelmayapti");
-      return false;
-    }
-
-    return true;
-  };
+  //   return true;
+  // };
 
   const handlePasswordReset = async () => {
-    if (!validatePasswords()) return;
+    // if (!validatePasswords()) return;
+    setIsLoading(true);
+    try {
+      // Send verification code via API
+      const sendOtp = await axios.post(
+        "https://fixoo.uz/api/v1/verification/send",
+        {
+          type: "reset-password",
+          phone: phone,
+        }
+      );
 
-    setShowConfirmModal(true);
+      // Navigate to phone verification page
+      router.push(
+        `/verify-phone?phone=${encodeURIComponent(phone)}&purpose=reset-password`
+      );
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+      setIsLoading(false);
+      if (axios.isAxiosError(error)) {
+        const errorMessage =
+          error.response?.data?.message || t("error_sending_otp");
+        alert(errorMessage);
+      } else {
+        alert(t("network_error"));
+      }
+    }
+
+    // setShowConfirmModal(true);
   };
 
   const handleConfirmChange = async () => {
@@ -54,7 +80,6 @@ export default function ResetPasswordPage() {
       // TODO: Replace with actual API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    
       alert("Parol muvaffaqiyatli o'zgartirildi!");
       router.push("/login");
     } catch (error) {
@@ -79,7 +104,11 @@ export default function ResetPasswordPage() {
 
   if (isLoading) {
     return (
-      <HammerLoader fullScreen={true} showText={true} text="Saqlanmoqda..." />
+      <HammerLoader
+        fullScreen={true}
+        showText={true}
+        text="SMS yuborilmoqda..."
+      />
     );
   }
 
@@ -114,7 +143,7 @@ export default function ResetPasswordPage() {
             {/* New Password */}
             <div className="mb-4">
               <PhoneInput value={phone} onChange={setPhone} required />
-              <label className="block text-sm font-medium text-gray-700 mb-2 mt-5">
+              {/* <label className="block text-sm font-medium text-gray-700 mb-2 mt-5">
                 Yangi parol <span className="text-red-500">*</span>
               </label>
               <div className="relative">
@@ -171,11 +200,11 @@ export default function ResetPasswordPage() {
                   )}
                 </button>
               </div>
-              <p className="text-xs text-gray-500 mt-1">Kamida 6 ta belgi</p>
+              <p className="text-xs text-gray-500 mt-1">Kamida 6 ta belgi</p> */}
             </div>
 
             {/* Confirm Password */}
-            <div className="mb-6">
+            {/* <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Parolni tasdiqlang <span className="text-red-500">*</span>
               </label>
@@ -233,7 +262,7 @@ export default function ResetPasswordPage() {
                   )}
                 </button>
               </div>
-            </div>
+            </div> */}
 
             {/* Error Message */}
             {error && (
@@ -247,7 +276,7 @@ export default function ResetPasswordPage() {
               onClick={handlePasswordReset}
               className="w-full bg-teal-600 text-white py-3 px-4 rounded-xl font-bold hover:bg-teal-700 transition-all duration-200 transform hover:scale-105"
             >
-              Parolni o'zgartirish
+              Raqamni tastiqlash
             </button>
           </div>
         </div>

@@ -127,7 +127,7 @@ export default function RegisterPage() {
     try {
       // Send verification code via API
       const sendOtp = await axios.post(
-        "http://3.75.173.205:3000/api/v1/verification/send",
+        "https://fixoo.uz/api/v1/verification/send",
         {
           type: "register",
           phone: formData.phone,
